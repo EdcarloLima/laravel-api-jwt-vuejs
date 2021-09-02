@@ -31,7 +31,7 @@
 
       created() {
         /* Se quiser excluir o cookie */
-        Cookie.remove('_myapp_token');
+        //Cookie.remove('_myapp_token');
       },
 
       methods: {
