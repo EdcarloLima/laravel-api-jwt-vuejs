@@ -1,14 +1,14 @@
 <template>
   <main class="form-signin">
-  <form>
+  <form @submit.stop.prevent="submit">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
-      <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <input v-model="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
       <label for="floatingInput">Email address</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+      <input v-model="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
       <label for="floatingPassword">Password</label>
     </div>
 
@@ -18,15 +18,45 @@
 </template>
 
 <script>
-export default {
-    name: 'Login',
-    data() {
-        return {
+  import Cookie from 'js-cookie';
 
-        };
-    },
-    methods: {},
-};
+  export default {
+      name: 'Login',
+      data() {
+          return {
+            email: '',
+            password: '',
+          };
+      },
+
+      created() {
+        /* Se quiser excluir o cookie */
+        Cookie.remove('_myapp_token');
+      },
+
+      methods: {
+        submit() {
+          const payload = {
+            email: this.email,
+            password: this.password,
+          };
+          
+          /* Configuração do .env com a url da api back end */
+          fetch('https://laravel-api-jwt.test/api/login',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access': 'application/json',
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(response => response.json())
+          .then(res => {
+            Cookie.set('_myapp_token',res.access_token);
+          })
+        },
+      },
+  };
 </script>
 
 <style>
